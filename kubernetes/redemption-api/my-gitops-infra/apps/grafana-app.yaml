@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # This points directly to the official Grafana Helm repository
+    repoURL: 'https://grafana.github.io/helm-charts'
+    targetRevision: 8.5.1
+    chart: grafana
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: monitoring  # Deploys into your monitoring namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
