@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redemption-api-gitops
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/waiyancrist-rgb/accor-redemption-eks-lab'
+    targetRevision: HEAD
+    path: kubernetes   # 👈 Tells Argo CD to look exactly inside your new folder layout
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: redemption
+  syncPolicy:
+    automated:
+      prune: true      # Automatically deletes old resources if you remove them from Git
+      selfHeal: true   # Automatically fixes the cluster if someone manually changes something
