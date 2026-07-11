@@ -9,31 +9,10 @@ spec:
     repoURL: https://grafana.github.io/helm-charts
     targetRevision: 6.27.0
     chart: loki
+    # This path assumes loki-values.yaml is in the same folder as loki.yaml
     helm:
-      values: |
-        loki:
-          deploymentMode: SingleBinary
-          auth_enabled: false
-          singleBinary:
-            replicas: 1
-          storage:
-            type: 'filesystem'
-            bucketNames:
-              chunks: chunks
-              ruler: ruler
-              admin: admin
-            filesystem:
-              chunks_directory: /tmp/loki/chunks
-              rules_directory: /tmp/loki/rules
-          schemaConfig:
-            configs:
-              - from: "2024-01-01"
-                store: tsdb
-                object_store: filesystem
-                schema: v13
-                index:
-                  prefix: index_
-                  period: 24h
+      valueFiles:
+        - loki-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
