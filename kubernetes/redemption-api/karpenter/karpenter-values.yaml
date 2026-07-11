@@ -1,0 +1,20 @@
+serviceAccount:
+  create: true
+  name: karpenter
+  annotations:
+    # 🎯 Tells EKS to map your AWS IAM Role to the Karpenter pod
+    eks.amazonaws.com/role-arn: "arn:aws:iam::353468317489:user/aws-master-admin/accor-redemption-eks-lab-karpenter-controller"
+
+settings:
+  # 🎯 Matches your local laboratory infrastructure
+  clusterName: "accor-redemption-eks-lab"
+  clusterEndpoint: "https://2411C6B32D93A097411D8043135C86C8.gr7.ap-southeast-1.eks.amazonaws.com"
+
+# Prevent Karpenter from running on nodes it is trying to scale/delete
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: karpenter.sh/managed-by
+          operator: DoesNotExist

@@ -1,0 +1,40 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  amiFamily: AL2
+  role: "accor-redemption-eks-lab-karpenter-node"
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "accor-redemption-eks-lab"
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "accor-redemption-eks-lab"
+  amiSelectorTerms:
+    - alias: al2@latest 
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: default
+spec:
+  template:
+    spec:
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+        - key: karpenter.io/instance-category
+          operator: In
+          values: ["t", "c", "m"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
