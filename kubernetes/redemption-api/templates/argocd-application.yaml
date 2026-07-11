@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/waiyancrist-rgb/accor-redemption-eks-lab'
     targetRevision: HEAD
-    path: kubernetes   # 👈 Tells Argo CD to look exactly inside your new folder layout
+    path: kubernetes/redemption-api  #  Tells Argo CD to look exactly inside your new folder layout
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: redemption
