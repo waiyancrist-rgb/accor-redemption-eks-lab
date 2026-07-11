@@ -13,7 +13,7 @@ spec:
       values: |
         deploymentMode: SingleBinary
 
-        # 1. Disable real disks and use temporary memory space for logs
+        # 1. Monolithic configuration with local ephemeral disk space
         singleBinary:
           replicas: 1
           persistence:
@@ -25,14 +25,13 @@ spec:
             - name: storage
               mountPath: /var/loki
 
-        # 2. CRITICAL: Slash the cache allocation down from 8GB to 512MB
+        # 2. Disable heavy distributed caching layers completely
         chunksCache:
-          allocatedMemory: 512
-
+          enabled: false
         resultsCache:
-          allocatedMemory: 256
+          enabled: false
 
-        # 3. Keep target states turned off
+        # 3. Keep target microservice states turned off
         write:
           replicas: 0
         read:
