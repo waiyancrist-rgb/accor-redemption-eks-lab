@@ -12,6 +12,7 @@ spec:
     helm:
       values: |
         loki:
+          deploymentMode: SingleBinary
           auth_enabled: false
           singleBinary:
             replicas: 1
