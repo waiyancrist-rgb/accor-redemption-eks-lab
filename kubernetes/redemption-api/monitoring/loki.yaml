@@ -17,6 +17,11 @@ spec:
             replicas: 1
           storage:
             type: 'filesystem'
+            # Add these lines to satisfy the Helm chart:
+            bucketNames:
+              chunks: chunks
+              ruler: ruler
+              admin: admin
           schemaConfig:
             configs:
               - from: "2024-01-01"
@@ -26,10 +31,3 @@ spec:
                 index:
                   prefix: index_
                   period: 24h
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
