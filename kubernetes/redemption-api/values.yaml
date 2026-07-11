@@ -1,16 +1,13 @@
 replicaCount: 3
 
 image:
-  # Temporary public image for rapid testing. 
- 
   repository: nginxdemos/hello
   tag: plain-text
   pullPolicy: IfNotPresent
-  containerPort: 80 # The dummy app listens on 80. Real Redemption API will use 8080!
+  containerPort: 80
 
 serviceAccount:
   name: redemption-api-sa
- 
   roleArn: "arn:aws:iam::123456789012:role/redemption-api-irsa-role"
 
 service:
@@ -18,16 +15,19 @@ service:
   port: 80
   targetPort: 80
 
+# --- FIXED INGRESS BLOCK ---
 ingress:
-  # We use 'nginx' here to route through the Ingress controller you just deployed!
   className: nginx
   host: app.test-env.internal
+  path: /                  # Added base path routing definition
+
 
 hpa:
-  minReplicas: 3
-  maxReplicas: 50
+  minReplicas: 3           
+  maxReplicas: 50         
   targetCPU: 60
   targetMemory: 70
 
-  argocd:
-  enabled: true
+
+argocd:
+  enabled: true            # Moved completely out of the HPA block to the root level
