@@ -11,39 +11,29 @@ spec:
     chart: loki
     helm:
       values: |
-        # 1. Force Single Binary mode at the root level
+        # 1. Force the SingleBinary deployment mode
         deploymentMode: SingleBinary
 
+        # 2. Correctly assign replicas at the ROOT level
+        singleBinary:
+          replicas: 1
+
+        write:
+          replicas: 0
+
+        read:
+          replicas: 0
+
+        backend:
+          replicas: 0
+
+        # 3. Internal Loki engine configurations
         loki:
           auth_enabled: false
-          singleBinary:
-            replicas: 1
-          
-          # 2. Explicitly disable distributed components to pass validation
-          distributor:
-            enabled: false
-          querier:
-            enabled: false
-          query_frontend:
-            enabled: false
-          index_gateway:
-            enabled: false
-          ingester:
-            enabled: false
-          ruler:
-            enabled: false
-          compactor:
-            enabled: false
-
-          # 3. Use local filesystem storage
+          commonConfig:
+            replication_factor: 1
           storage:
             type: 'filesystem'
-            filesystem:
-              chunks_directory: /tmp/loki/chunks
-              rules_directory: /tmp/loki/rules
-              admin_directory: /tmp/loki/admin
-
-          # 4. Correct schema config for TSDB engine
           schemaConfig:
             configs:
               - from: "2024-01-01"
