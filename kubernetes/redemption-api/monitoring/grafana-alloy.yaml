@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana-alloy
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 0.3.2
+    chart: alloy
+    helm:
+      values: |
+        alloy:
+          # --- ADD THIS NEW SECTION BELOW ---
+          mounts:
+            varlog: true
+          # ----------------------------------
+          configMap:
+            content: |
+              loki.write "local" {
+                endpoint {
+                  url = "http://loki-gateway.monitoring.svc.cluster.local:80/loki/api/v1/push"
+                }
+              }
+              local.file_match "pods" {
+                path_targets = [{"__path__" = "/var/log/pods/*/*/*.log"}]
+              }
+              loki.source.file "pods" {
+                targets    = local.file_match.pods.targets
+                forward_to = [loki.write.local.receiver]
+              }
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
