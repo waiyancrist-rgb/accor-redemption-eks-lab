@@ -11,23 +11,36 @@ spec:
     chart: loki
     helm:
       values: |
-        # 1. Force the SingleBinary deployment mode
         deploymentMode: SingleBinary
 
-        # 2. Correctly assign replicas at the ROOT level
+        # 1. Disable real disks and use temporary memory space for logs
         singleBinary:
           replicas: 1
+          persistence:
+            enabled: false
+          extraVolumes:
+            - name: storage
+              emptyDir: {}
+          extraVolumeMounts:
+            - name: storage
+              mountPath: /var/loki
 
+        # 2. CRITICAL: Slash the cache allocation down from 8GB to 512MB
+        chunksCache:
+          allocatedMemory: 512
+
+        resultsCache:
+          allocatedMemory: 256
+
+        # 3. Keep target states turned off
         write:
           replicas: 0
-
         read:
           replicas: 0
-
         backend:
           replicas: 0
 
-        # 3. Internal Loki engine configurations
+        # 4. Core Loki configuration
         loki:
           auth_enabled: false
           commonConfig:
