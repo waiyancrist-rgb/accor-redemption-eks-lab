@@ -15,7 +15,6 @@ spec:
           auth_enabled: false
           singleBinary:
             replicas: 1
-          # These storage configurations prevent the 'nil pointer' error
           storage:
             type: 'filesystem'
             bucketNames:
@@ -34,8 +33,6 @@ spec:
                 index:
                   prefix: index_
                   period: 24h
-          server:
-            http_listen_port: 3100
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
