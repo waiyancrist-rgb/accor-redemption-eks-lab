@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server-ingress
+  namespace: argocd
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # CHANGE THIS FROM HTTPS TO HTTP:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - argocd.18.140.139.152.sslip.io
+    secretName: argocd-server-tls
+  rules:
+  - host: argocd.18.140.139.152.sslip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              # Point this directly to the HTTP port 80 to match the protocol
+              number: 80
