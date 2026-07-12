@@ -6,13 +6,16 @@ metadata:
 spec:
   project: default
   source:
-    # This points directly to the official Grafana Helm repository
     repoURL: 'https://grafana.github.io/helm-charts'
     targetRevision: 8.5.1
     chart: grafana
+    # ADD THIS BLOCK TO OVERRIDE THE REPLICA COUNT
+    helm:
+      values: |
+        replicas: 1
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: monitoring  # Deploys into your monitoring namespace
+    namespace: monitoring
   syncPolicy:
     automated:
       prune: true
