@@ -1,20 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: accor
+  name: redemption-api-gitops
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    repoURL: https://github.com/waiyancrist-rgb/accor-redemption-eks-lab.git
     targetRevision: HEAD
-    path: helm-guestbook
+    path: kubernetes/redemption-api
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: redemption
+  
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
